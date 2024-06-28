@@ -1,0 +1,57 @@
+[project]
+requires-python = ">= 3.8"
+name = 'django-vendor'
+version = '0.0.1'
+description="Multiple ways to collect static files from vendor's and local build files"
+dependencies = ['django>=4.2']
+authors = [{name = "Eduardo Oliveira", email = "eduardo_y05@outlook.com"}]
+maintainers = [{name = "Eduardo Oliveira", email = "eduardo_y05@outlook.com"}]
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["django", "vendor", "static"]
+classifiers = [
+  'Development Status :: 5 - Production/Stable',
+  'Environment :: Web Environment',
+  'Framework :: Django',
+  'Intended Audience :: Developers',
+  'License :: OSI Approved :: MIT License',
+  'Operating System :: OS Independent',
+  'Programming Language :: Python',
+  'Programming Language :: Python :: 3',
+  'Programming Language :: Python :: 3.8',
+  'Programming Language :: Python :: 3.9',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: 3.12',
+]
+
+[project.optional-dependencies]
+dev = ["black", "isort", "pre-commit"]
+test = ['toml', 'coverage[toml]']
+
+[project.urls]
+homepage = "https://github.com/inventare/django-vendor"
+documentation = "https://github.com/inventare/django-vendor"
+
+[build-system]
+requires = ["setuptools", "build"]
+build-backend = "setuptools.build_meta"
+
+[tool.coverage.run]
+branch = true
+include = ['django_vendor/**/*.py']
+
+[tool.coverage.report]
+ignore_errors = false
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+
+[tool.isort]
+profile = 'black'
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+packages = ["django_vendor"]

@@ -1,20 +1,23 @@
 import json
 import tempfile
-from typing import Any, Optional
+from typing import Any, List, Optional, Tuple
+
 from django.apps import apps
+from django.contrib.staticfiles.finders import BaseFinder
 from django.core.checks import Error
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.contrib.staticfiles.finders import BaseFinder
 from django.utils.module_loading import import_string
 
 validate_url = URLValidator()
+
 
 class RemoteFileInfo:
     """
     A utility class used for store file_name and url and used as wrapper for storage
     in list method of BaseFinder and to download files in find method.
     """
+
     tag_name: str
     file_name: str
     url: str
@@ -23,20 +26,24 @@ class RemoteFileInfo:
         self.tag_name = tag_name
         self.file_name = file_name
         self.url = url
-    
+
     def __repr__(self) -> str:
         return f"<{self.file_name}:{self.url}>"
-    
+
     def path(self, value):
         if value != self.file_name:
             return None
         return value
-    
+
     def download(self):
         import os
-        temp_file = os.path.join(tempfile.gettempdir(), os.path.basename(self.file_name))
-        
+
+        temp_file = os.path.join(
+            tempfile.gettempdir(), os.path.basename(self.file_name)
+        )
+
         from urllib.request import urlretrieve
+
         urlretrieve(self.url, temp_file)
 
         return temp_file
@@ -47,51 +54,60 @@ class RemoteFileInfo:
         temp_file = self.download()
         return open(temp_file)
 
+
 class RemoteFileFinder(BaseFinder):
     """
-    A static files finder that uses the ``REMOTE_STATICFILES`` setting
-    to locale and download remote static files.
+    A static files finder that find remote file configuration's across
+    your apps, and use this settings to  download the vendor files as
+    temporary path's and serve when needed.
     """
+
     files: list[RemoteFileInfo] = []
-    
-    def get_vendor_modules(self):
+
+    def _get_vendor_modules(self) -> List[Tuple[Any, str]]:
+        """
+        Load the VENDOR_REMOTE_FILES variable from vendor module in each app
+        and return a list of tuples containing the modules and the import string.
+        """
         configs = apps.get_app_configs()
         modules = []
         for config in configs:
-            import_module = f"{config.name}.vendor.VENDOR_FILES"
+            import_module = f"{config.name}.vendor.VENDOR_REMOTE_FILES"
             try:
                 module = import_string(import_module)
-                modules.append(module)
+                modules.append((module, import_module))
             except ImportError:
                 pass
         return modules
-    
-    def parse_module(self, module):
+
+    def _parse_module(self, module):
         for root in module:
             if isinstance(root, (list, tuple)):
                 tag_name, file_name, url = root
             elif isinstance(root, dict):
-                tag_name = root.get('name')
-                file_name = root.get('file_name')
-                url = root.get('url')
-            
+                tag_name = root.get("name")
+                file_name = root.get("file_name")
+                url = root.get("url")
+
             self.files.append(RemoteFileInfo(tag_name, file_name, url))
 
-    def parse_module_list(self):
-        for module in self.modules:
-            self.parse_module(module)
+    def _parse_module_list(self):
+        if len(self.files) != 0:
+            return
+        for module, _ in self.modules:
+            self._parse_module(module)
 
     def __init__(self, app_names=None, *args, **kwargs):
         self.files = []
-        self.modules = self.get_vendor_modules()
+        self.modules = self._get_vendor_modules()
 
     def list(self, ignore_patterns):
-        self.parse_module_list()
+        self._parse_module_list()
         for item in self.files:
             yield item.file_name, item
-    
+
     def find(self, path, all=False):
-        self.parse_module_list()
+        self._parse_module_list()
 
         files = []
         for item in self.files:
@@ -102,13 +118,13 @@ class RemoteFileFinder(BaseFinder):
                 files.append(downloaded)
         return files
 
-    def fail(self, error: str, id: str, hint: Optional[str]):
+    def _fail(self, error: str, id: str, hint: Optional[str]):
         return [Error(error, hint=hint, id=id)]
-    
-    def check_module(self, module):
+
+    def _check_module(self, module, import_path: str):
         if not isinstance(module, (list, tuple)):
-            return self.fail(
-                "The REMOTE_STATICFILES setting is not a tuple or list.",
+            return self._fail(
+                f"{import_path}: is not a tuple or list.",
                 hint="Perhaps you forgot a trailing comma?",
                 id="django_vendor.E001",
             )
@@ -116,56 +132,56 @@ class RemoteFileFinder(BaseFinder):
             if isinstance(root, (list, tuple)):
                 root = list(root)
                 if len(root) != 3:
-                    return self.fail(
-                        f"The REMOTE_STATICFILES item: [{','.join(root)}] as list or tuple should have exactly three elements.",
+                    return self._fail(
+                        f"{import_path}: {str(root)} should have exactly three elements.",
                         hint="Perhaps you forgot a trailing comma?",
                         id="django_vendor.E002",
                     )
                 tag_name, file_name, url = root
                 if not tag_name or not url or not file_name:
-                    return self.fail(
-                        f"The REMOTE_STATICFILES item: [{','.join(root)}] file_name or url is invalid.",
+                    return self._fail(
+                        f"{import_path}: the name, file_name or url is invalid.",
                         hint="Add url and file_name key",
                         id="django_vendor.E005",
                     )
                 try:
                     validate_url(url)
                 except ValidationError:
-                    return self.fail(
-                        f"The url is invalid for REMOTE_STATICFILES: {url}.",
+                    return self._fail(
+                        f"{import_path}: the url is invalid: {url}",
                         hint="Check the url, schemas.",
                         id="django_vendor.E003",
                     )
             elif isinstance(root, dict):
-                tag_name = root.get('name')
-                url = root.get('url')
-                file_name = root.get('file_name')
+                tag_name = root.get("name")
+                url = root.get("url")
+                file_name = root.get("file_name")
                 if not tag_name or not url or not file_name:
-                    return self.fail(
-                        f"The REMOTE_STATICFILES item: {json.dumps(root)} as dict should have file_name and url keys.",
+                    return self._fail(
+                        f"{import_path}: {json.dumps(root)} should have name, file_name and url keys.",
                         hint="Add url and file_name key",
                         id="django_vendor.E004",
                     )
                 try:
                     validate_url(url)
                 except ValidationError:
-                    return self.fail(
-                        f"The url is invalid for REMOTE_STATICFILES: {url}.",
+                    return self._fail(
+                        f"{import_path}: the url is invalid: {url}",
                         hint="Check the url, schemas.",
                         id="django_vendor.E003",
                     )
             else:
-                return self.fail(
-                    f"The REMOTE_STATICFILES item: {root} has invalid type.",
+                return self._fail(
+                    f"{import_path}: the item has a invalid type.",
                     hint="Should be a list, tuple or dict.",
                     id="django_vendor.E006",
                 )
         return []
 
     def check(self, **kwargs: Any):
-        modules = self.get_vendor_modules()
-        for module in modules:
-            errors = self.check_module(module)
+        modules = self._get_vendor_modules()
+        for module, import_path in modules:
+            errors = self._check_module(module, import_path)
             if not errors:
                 continue
             return errors
