@@ -8,7 +8,11 @@ URL1 = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.mi
 URL2 = "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
 MODULE = [
     ["file", "file.js", URL1],
-    ["file2", "file2.js", URL2],
+    {
+        "name": "file2",
+        "file_name": "file2.js",
+        "url": URL2,
+    },
 ]
 
 
