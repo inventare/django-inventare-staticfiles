@@ -47,3 +47,20 @@ class RemoteFileFinderListTestCase(TestCase):
 
         self.assertEqual(item2[0], "file2.js")
         self.assertEqual(item2[1].url, URL2)
+
+    @patch("django_vendor.finders.apps.get_app_configs")
+    @patch("django_vendor.finders.import_string")
+    def test_list_parsed_files_count(self, mock_import: MagicMock, mock: MagicMock):
+        my_app = MagicMock()
+        my_app.name = "my_application"
+
+        mock.return_value = [my_app]
+        mock_import.return_value = MODULE
+
+        finder = RemoteFileFinder()
+        list(finder.list([]))
+        original_files = len(finder.files)
+        list(finder.list([]))
+        new_files = len(finder.files)
+
+        self.assertEqual(original_files, new_files)
