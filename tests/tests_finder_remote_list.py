@@ -30,7 +30,7 @@ class RemoteFileFinderListTestCase(TestCase):
 
     @patch("django_vendor.finders.apps.get_app_configs")
     @patch("django_vendor.finders.import_string")
-    def test_find(self, mock_import: MagicMock, mock: MagicMock):
+    def test_list(self, mock_import: MagicMock, mock: MagicMock):
         my_app = MagicMock()
         my_app.name = "my_application"
 
