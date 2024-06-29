@@ -1,0 +1,7 @@
+black
+isort
+pre-commit
+poethepoet
+toml
+coverage[toml]
+poethepoet

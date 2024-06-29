@@ -27,9 +27,6 @@ class RemoteFileInfo:
         self.file_name = file_name
         self.url = url
 
-    def __repr__(self) -> str:
-        return f"<{self.file_name}:{self.url}>"
-
     def path(self, value):
         if value != self.file_name:
             return None
@@ -62,7 +59,7 @@ class RemoteFileFinder(BaseFinder):
     temporary path's and serve when needed.
     """
 
-    files: list[RemoteFileInfo] = []
+    files: List[RemoteFileInfo] = []
 
     def _get_vendor_modules(self) -> List[Tuple[Any, str]]:
         """

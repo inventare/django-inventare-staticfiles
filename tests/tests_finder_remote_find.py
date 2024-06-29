@@ -8,63 +8,64 @@ URL1 = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.mi
 URL2 = "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
 MODULE = [
     ["file", "file.js", URL1],
-    {
-        "name": "file2",
-        "file_name": "file2.js",
-        "url": URL2,
-    },
+    ["file2", "file2.js", URL2],
 ]
 
 
-class RemoteFileFinderListTestCase(TestCase):
+class RemoteFileFinderFindTestCase(TestCase):
     @patch("django_vendor.finders.apps.get_app_configs")
     @patch("django_vendor.finders.import_string")
-    def test_initializer(self, mock_import: MagicMock, mock: MagicMock):
+    @patch("django_vendor.finders.RemoteFileInfo.download")
+    def test_find(
+        self, mock_download: MagicMock, mock_import: MagicMock, mock: MagicMock
+    ):
         my_app = MagicMock()
         my_app.name = "my_application"
-        import_str = f"{my_app.name}.vendor.VENDOR_REMOTE_FILES"
+        content_value = "my-any-downloaded-file-content"
+
+        mock.return_value = [my_app]
+        mock_import.return_value = MODULE
+        mock_download.return_value = content_value
+
+        finder = RemoteFileFinder()
+        content = finder.find("file.js", all=False)
+
+        self.assertEqual(content, content_value)
+        mock_download.assert_called_once()
+
+    @patch("django_vendor.finders.apps.get_app_configs")
+    @patch("django_vendor.finders.import_string")
+    @patch("django_vendor.finders.RemoteFileInfo.download")
+    def test_find_all(
+        self, mock_download: MagicMock, mock_import: MagicMock, mock: MagicMock
+    ):
+        my_app = MagicMock()
+        my_app.name = "my_application"
+        content_value = "my-any-downloaded-file-content"
+
+        mock.return_value = [my_app]
+        mock_import.return_value = MODULE
+        mock_download.return_value = content_value
+
+        finder = RemoteFileFinder()
+        content = finder.find("file.js", all=True)
+
+        self.assertListEqual(content, [content_value])
+        mock_download.assert_called_once()
+
+    @patch("django_vendor.finders.apps.get_app_configs")
+    @patch("django_vendor.finders.import_string")
+    def test_find_parsed_files_count(self, mock_import: MagicMock, mock: MagicMock):
+        my_app = MagicMock()
+        my_app.name = "my_application"
 
         mock.return_value = [my_app]
         mock_import.return_value = MODULE
 
         finder = RemoteFileFinder()
-
-        mock_import.assert_called_once_with(import_str)
-        self.assertListEqual([(MODULE, import_str)], finder.modules)
-
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
-    def test_list(self, mock_import: MagicMock, mock: MagicMock):
-        my_app = MagicMock()
-        my_app.name = "my_application"
-
-        mock.return_value = [my_app]
-        mock_import.return_value = MODULE
-
-        finder = RemoteFileFinder()
-        paths = list(finder.list([]))
-        self.assertEqual(len(paths), 2)
-        item1, item2 = paths
-
-        self.assertEqual(item1[0], "file.js")
-        self.assertEqual(item1[1].url, URL1)
-
-        self.assertEqual(item2[0], "file2.js")
-        self.assertEqual(item2[1].url, URL2)
-
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
-    def test_list_parsed_files_count(self, mock_import: MagicMock, mock: MagicMock):
-        my_app = MagicMock()
-        my_app.name = "my_application"
-
-        mock.return_value = [my_app]
-        mock_import.return_value = MODULE
-
-        finder = RemoteFileFinder()
-        list(finder.list([]))
+        finder.find("file.js")
         original_files = len(finder.files)
-        list(finder.list([]))
+        finder.find("file.js")
         new_files = len(finder.files)
 
         self.assertEqual(original_files, new_files)

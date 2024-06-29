@@ -26,15 +26,15 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = ["black", "isort", "pre-commit"]
-test = ['toml', 'coverage[toml]']
+dev = ["black", "isort", "pre-commit", "poethepoet"]
+test = ['toml', 'coverage[toml]', "poethepoet"]
 
 [project.urls]
 homepage = "https://github.com/inventare/django-vendor"
 documentation = "https://github.com/inventare/django-vendor"
 
 [build-system]
-requires = ["setuptools", "build"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
@@ -55,3 +55,8 @@ profile = 'black'
 include-package-data = true
 zip-safe = false
 packages = ["django_vendor"]
+
+[tool.poe.tasks]
+test="coverage run manage.py test"
+report="coverage report"
+html="coverage html"
