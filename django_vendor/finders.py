@@ -59,7 +59,7 @@ class RemoteFileFinder(BaseFinder):
     temporary path's and serve when needed.
     """
 
-    files: list[RemoteFileInfo] = []
+    files: List[RemoteFileInfo] = []
 
     def _get_vendor_modules(self) -> List[Tuple[Any, str]]:
         """
