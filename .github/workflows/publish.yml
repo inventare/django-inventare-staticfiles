@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: pip install .[deploy]
 
+      - name: Install pypa/build
+        run: python -m pip install build --user
+
       - name: Build package
         run: poe build
 
