@@ -17,7 +17,7 @@ jobs:
           python-version: 3.9
 
       - name: Install dependencies
-        run: pip install .
+        run: pip install .[deploy]
 
       - name: Build package
         run: poe build
