@@ -34,7 +34,7 @@ homepage = "https://github.com/inventare/django-vendor"
 documentation = "https://github.com/inventare/django-vendor"
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "build"]
 build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
@@ -60,3 +60,4 @@ packages = ["django_vendor"]
 test="coverage run manage.py test"
 report="coverage report"
 html="coverage html"
+build="python -m build --sdist --wheel --outdir dist/"
