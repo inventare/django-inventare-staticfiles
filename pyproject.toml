@@ -1,6 +1,6 @@
 [project]
 requires-python = ">= 3.8"
-name = 'django-vendor'
+name = 'django-inventare-staticfiles'
 version = '0.0.3'
 description="Multiple ways to collect static files from vendor's and local build files"
 dependencies = ['django>=4.2']
@@ -40,7 +40,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
 branch = true
-include = ['django_vendor/**/*.py']
+include = ['django_inventare_staticfiles/**/*.py']
 
 [tool.coverage.report]
 ignore_errors = false
@@ -55,7 +55,7 @@ profile = 'black'
 [tool.setuptools]
 include-package-data = true
 zip-safe = false
-packages = ["django_vendor"]
+packages = ["django_inventare_staticfiles"]
 
 [tool.poe.tasks]
 test="coverage run manage.py test"

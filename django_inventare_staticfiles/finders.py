@@ -123,7 +123,7 @@ class RemoteFileFinder(BaseFinder):
             return self._fail(
                 f"{import_path}: is not a tuple or list.",
                 hint="Perhaps you forgot a trailing comma?",
-                id="django_vendor.E001",
+                id="django_inventare_staticfiles.E001",
             )
         for root in module:
             if isinstance(root, (list, tuple)):
@@ -132,14 +132,14 @@ class RemoteFileFinder(BaseFinder):
                     return self._fail(
                         f"{import_path}: {str(root)} should have exactly three elements.",
                         hint="Perhaps you forgot a trailing comma?",
-                        id="django_vendor.E002",
+                        id="django_inventare_staticfiles.E002",
                     )
                 tag_name, file_name, url = root
                 if not tag_name or not url or not file_name:
                     return self._fail(
                         f"{import_path}: the name, file_name or url is invalid.",
                         hint="Add url and file_name key",
-                        id="django_vendor.E005",
+                        id="django_inventare_staticfiles.E005",
                     )
                 try:
                     validate_url(url)
@@ -147,7 +147,7 @@ class RemoteFileFinder(BaseFinder):
                     return self._fail(
                         f"{import_path}: the url is invalid: {url}",
                         hint="Check the url, schemas.",
-                        id="django_vendor.E003",
+                        id="django_inventare_staticfiles.E003",
                     )
             elif isinstance(root, dict):
                 tag_name = root.get("name")
@@ -157,7 +157,7 @@ class RemoteFileFinder(BaseFinder):
                     return self._fail(
                         f"{import_path}: {json.dumps(root)} should have name, file_name and url keys.",
                         hint="Add url and file_name key",
-                        id="django_vendor.E004",
+                        id="django_inventare_staticfiles.E004",
                     )
                 try:
                     validate_url(url)
@@ -165,13 +165,13 @@ class RemoteFileFinder(BaseFinder):
                     return self._fail(
                         f"{import_path}: the url is invalid: {url}",
                         hint="Check the url, schemas.",
-                        id="django_vendor.E003",
+                        id="django_inventare_staticfiles.E003",
                     )
             else:
                 return self._fail(
                     f"{import_path}: the item has a invalid type.",
                     hint="Should be a list, tuple or dict.",
-                    id="django_vendor.E006",
+                    id="django_inventare_staticfiles.E006",
                 )
         return []
 

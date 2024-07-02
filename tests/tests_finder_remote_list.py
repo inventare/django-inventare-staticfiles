@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
 
-from django_vendor.finders import RemoteFileFinder
+from django_inventare_staticfiles.finders import RemoteFileFinder
 
 URL1 = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 URL2 = "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -17,8 +17,8 @@ MODULE = [
 
 
 class RemoteFileFinderListTestCase(TestCase):
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
     def test_initializer(self, mock_import: MagicMock, mock: MagicMock):
         my_app = MagicMock()
         my_app.name = "my_application"
@@ -32,8 +32,8 @@ class RemoteFileFinderListTestCase(TestCase):
         mock_import.assert_called_once_with(import_str)
         self.assertListEqual([(MODULE, import_str)], finder.modules)
 
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
     def test_list(self, mock_import: MagicMock, mock: MagicMock):
         my_app = MagicMock()
         my_app.name = "my_application"
@@ -52,8 +52,8 @@ class RemoteFileFinderListTestCase(TestCase):
         self.assertEqual(item2[0], "file2.js")
         self.assertEqual(item2[1].url, URL2)
 
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
     def test_list_parsed_files_count(self, mock_import: MagicMock, mock: MagicMock):
         my_app = MagicMock()
         my_app.name = "my_application"

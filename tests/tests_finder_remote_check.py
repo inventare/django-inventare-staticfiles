@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
 
-from django_vendor.finders import RemoteFileFinder
+from django_inventare_staticfiles.finders import RemoteFileFinder
 
 ERROR_MODULES = [
     # NOT NAME
@@ -134,7 +134,7 @@ SUCCESS_MODULES = [
 class RemoteFileFinderCheckTestCase(TestCase):
     IMPORT_STR = "@import_str_val@"
 
-    @patch("django_vendor.finders.RemoteFileFinder._get_vendor_modules")
+    @patch("django_inventare_staticfiles.finders.RemoteFileFinder._get_vendor_modules")
     def test_check_not_list_or_tuple(self, mock: MagicMock):
         mock.return_value = [({}, self.IMPORT_STR)]
 
@@ -142,7 +142,7 @@ class RemoteFileFinderCheckTestCase(TestCase):
         errors = finder.check()
         self.assertEqual(1, len(errors))
 
-    @patch("django_vendor.finders.RemoteFileFinder._get_vendor_modules")
+    @patch("django_inventare_staticfiles.finders.RemoteFileFinder._get_vendor_modules")
     def test_check_with_errors(self, mock: MagicMock):
         for item in ERROR_MODULES:
             mock.return_value = [(item, self.IMPORT_STR)]
@@ -154,7 +154,7 @@ class RemoteFileFinderCheckTestCase(TestCase):
             item = errors[0]
             self.assertTrue(self.IMPORT_STR in item.msg)
 
-    @patch("django_vendor.finders.RemoteFileFinder._get_vendor_modules")
+    @patch("django_inventare_staticfiles.finders.RemoteFileFinder._get_vendor_modules")
     def test_check_with_success(self, mock: MagicMock):
         for item in SUCCESS_MODULES:
             mock.return_value = [(item, self.IMPORT_STR)]
