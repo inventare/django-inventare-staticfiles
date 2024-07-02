@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
 
-from django_vendor.finders import RemoteFileFinder
+from django_inventare_staticfiles.finders import RemoteFileFinder
 
 URL1 = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 URL2 = "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -13,9 +13,9 @@ MODULE = [
 
 
 class RemoteFileFinderFindTestCase(TestCase):
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
-    @patch("django_vendor.finders.RemoteFileInfo.download")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.RemoteFileInfo.download")
     def test_find(
         self, mock_download: MagicMock, mock_import: MagicMock, mock: MagicMock
     ):
@@ -33,9 +33,9 @@ class RemoteFileFinderFindTestCase(TestCase):
         self.assertEqual(content, content_value)
         mock_download.assert_called_once()
 
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
-    @patch("django_vendor.finders.RemoteFileInfo.download")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.RemoteFileInfo.download")
     def test_find_all(
         self, mock_download: MagicMock, mock_import: MagicMock, mock: MagicMock
     ):
@@ -53,8 +53,8 @@ class RemoteFileFinderFindTestCase(TestCase):
         self.assertListEqual(content, [content_value])
         mock_download.assert_called_once()
 
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
     def test_find_parsed_files_count(self, mock_import: MagicMock, mock: MagicMock):
         my_app = MagicMock()
         my_app.name = "my_application"

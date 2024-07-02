@@ -54,7 +54,7 @@ MIDDLEWARE = [
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "django_vendor.finders.RemoteFileFinder",
+    "django_inventare_staticfiles.finders.RemoteFileFinder",
 )
 
 ROOT_URLCONF = "tests.urls"

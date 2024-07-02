@@ -22,8 +22,8 @@ TEMPLATE_CODE_2 = """
 
 
 class VendorTemplateTagTestCase(TestCase):
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
     def test_call_template_tag(self, mock_import: MagicMock, mock: MagicMock):
         my_app = MagicMock()
         my_app.name = "my_application"
@@ -33,8 +33,8 @@ class VendorTemplateTagTestCase(TestCase):
         url = remote_url("file")
         self.assertEqual(url, "/static/file.js")
 
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
     def test_call_template_tag_invalid(self, mock_import: MagicMock, mock: MagicMock):
         my_app = MagicMock()
         my_app.name = "my_application"
@@ -44,8 +44,8 @@ class VendorTemplateTagTestCase(TestCase):
         with self.assertRaises(Exception):
             remote_url("file2")
 
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
     def test_template_tag_rendered(self, mock_import: MagicMock, mock: MagicMock):
         my_app = MagicMock()
         my_app.name = "my_application"
@@ -60,8 +60,8 @@ class VendorTemplateTagTestCase(TestCase):
         output = template.render(context={})
         self.assertTrue("/static/file.js" in output)
 
-    @patch("django_vendor.finders.apps.get_app_configs")
-    @patch("django_vendor.finders.import_string")
+    @patch("django_inventare_staticfiles.finders.apps.get_app_configs")
+    @patch("django_inventare_staticfiles.finders.import_string")
     def test_exception_in_template_tag_rendered(
         self, mock_import: MagicMock, mock: MagicMock
     ):

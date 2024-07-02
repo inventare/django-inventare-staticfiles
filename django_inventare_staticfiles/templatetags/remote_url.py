@@ -1,6 +1,7 @@
 from django.template import Library
 from django.templatetags.static import static
-from django_vendor.finders import RemoteFileFinder
+
+from django_inventare_staticfiles.finders import RemoteFileFinder
 
 register = Library()
 
