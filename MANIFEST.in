@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+recursive-exclude tests *
+recursive-exclude .github *
+recursive-include django_inventare_staticfiles *
+recursive-include django_inventare_staticfiles/templatetags *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]

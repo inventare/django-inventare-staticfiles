@@ -1,7 +1,7 @@
 [project]
 requires-python = ">= 3.8"
 name = 'django-inventare-staticfiles'
-version = '0.0.6'
+version = '0.0.7'
 description="Multiple ways to collect static files from vendor's and local build files"
 dependencies = ['django>=4.2']
 authors = [{name = "Eduardo Oliveira", email = "eduardo_y05@outlook.com"}]
@@ -55,11 +55,6 @@ profile = 'black'
 [tool.setuptools]
 include-package-data = true
 zip-safe = false
-
-[tool.setuptools.packages.find]
-include = ["django_inventare_staticfiles.*"]
-exclude = ["tests", "tests.*"]
-namespaces = false
 
 [tool.poe.tasks]
 test="coverage run manage.py test"
