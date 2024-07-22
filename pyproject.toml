@@ -1,7 +1,7 @@
 [project]
 requires-python = ">= 3.8"
 name = 'django-inventare-staticfiles'
-version = '0.0.5'
+version = '0.0.6'
 description="Multiple ways to collect static files from vendor's and local build files"
 dependencies = ['django>=4.2']
 authors = [{name = "Eduardo Oliveira", email = "eduardo_y05@outlook.com"}]
